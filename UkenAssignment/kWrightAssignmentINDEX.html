@@ -1,0 +1,281 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>kWright Uken Assignment</title>
+    
+	<!-- Inclusions -->
+	<link rel="stylesheet" type="text/css" href="kWrightAssignmentSTYLE.css">
+	<script src="ReactJS/react.js"></script>
+    <script src="ReactJS/JSXTransformer.js"></script>
+  </head>
+  
+  <body>
+    <div id="shipGrid"></div>
+	
+    <script type="text/jsx">
+	
+	{ /* global vars; used for communicating information across the app, between ReactComponents.*/ }
+	{ /* With more practice with React (and delviing some into Flux), these would likely be replaced with Stores/Dispatchers */ }
+	var remainingShips = 5;
+	var placedShips = 0;
+	var shipColours = [ "none", "none", "none",
+						"none", "none", "none",
+						"none", "none", "none" ];
+
+	{ /* The crux of the application, where it all comes together. */ }
+	var ShipApp = React.createClass({
+	render: function()
+	{
+        return (
+		<div className="shipApplication">
+			{ /* Form title. */ }
+			<h1 className="sans">Formation Viewer 2.5</h1>
+		
+			{ /* Basic Information */ }	
+			<InformationText />
+		
+			{ /* Formation Selection */ }	
+			<SelectionGrid />
+			<p id="RemainingShips" className={"sans"}>Remaining Ships: 5</p>
+			
+			{ /* Preview Area */ }
+			<PreviewImage />
+			
+			{ /* Notes */ }
+			<Notes />
+		</div>
+    );
+    }});
+	
+	{ /* The Information Text tells the user how to utilize this app to make a sweet airship formation. */ }
+	var InformationText = React.createClass({
+		render: function()
+		{
+			return (<p className={"sans"}>Select your formation using these dropdown menus. When you are satisfied with your choices, click 'Preview Formation' to see them in action. Choose wisely: you only have five ships in your fleet!</p>)
+		}
+	});
+	
+	{ /* The selection grid denotes the formation selection as a whole.*/ }
+	var SelectionGrid = React.createClass({
+		render: function () 
+		{
+			return (
+			  <tbody>
+				{
+					(function (items, i, l)
+					{
+						items.push(<br style={{"clear" : "both"}} />)
+						while (i++ < l)
+						{
+							var refName = "grid" + i;
+							items.push(<GridElement index={i} key={i} restorative={refName} />)
+							
+							if(i % 3 == 0)
+							{	
+								items.push(<br style={{"clear" : "both"}} />)
+							}
+						}
+					  
+					return items;
+					})
+					
+					([], 0, 9)
+				}
+			  </tbody>
+			);
+		},
+	});
+	
+	{/* The grid element allows the user to choose which ship they want where */ } 
+	var GridElement = React.createClass({
+		getInitialState: function()
+		{
+			return { 
+			colour: "none",
+			};
+		},
+
+		AdjustRemainingShips: function(event)
+		{	
+			var startColour = this.state.colour;
+			var endColour;
+			
+			{ /* The ugliest, and in dire need of optimization.*/ } 
+			this.setState({ colour: event.target.value}, function()
+			{
+				endColour = this.state.colour;
+				
+				if(startColour == endColour)
+				{
+					return;
+				}
+				
+				if(endColour == "none")
+				{
+					if(placedShips < 5)
+					{
+						remainingShips += 1;	
+					}
+					
+					placedShips -= 1;
+				}
+				
+				if(remainingShips > 0)
+				{
+					if(endColour != "none")
+					{
+						remainingShips -= 1;
+						placedShips+= 1;
+					}
+				}
+				else
+				{
+					endColour = "none";
+					{ /* Ideally, set selectedItem in select tag back to No Ship here. */ } 
+				}
+
+				shipColours[this.props.index - 1] = endColour;
+				
+				document.getElementById("RemainingShips").innerHTML = "Remaining Ships: " + remainingShips;
+			});
+		},
+		
+		render: function()
+		{
+			var idName = this.props.restorative;
+			
+			return(
+			<div id={idName} className="floatleft">
+				<select onChange={this.AdjustRemainingShips}>
+					<option value="none" defaultValue="selected">No Ship</option>
+					<option value="blue">Blue Ship</option>
+					<option value="brown">Brown Ship</option>
+					<option value="green">Green Ship</option>
+					<option value="red">Red Ship</option>
+					<option value="yellow">Yellow Ship</option>
+				</select>
+			</div>
+			)
+		}
+	});
+
+	{ /* The preview image displays the current formation of the ships selected. */ }
+	{ /* Requires background picture as well as correctly selected ships.  */ }
+	var PreviewImage = React.createClass({	
+		handleClick: function()
+		{
+			this.refs.ref1.componentWillReceiveProps(shipColours[0]);
+			this.refs.ref2.componentWillReceiveProps(shipColours[1]);
+			this.refs.ref3.componentWillReceiveProps(shipColours[2]);
+			this.refs.ref4.componentWillReceiveProps(shipColours[3]);
+			this.refs.ref5.componentWillReceiveProps(shipColours[4]);
+			this.refs.ref6.componentWillReceiveProps(shipColours[5]);
+			this.refs.ref7.componentWillReceiveProps(shipColours[6]);
+			this.refs.ref8.componentWillReceiveProps(shipColours[7]);
+			this.refs.ref9.componentWillReceiveProps(shipColours[8]);
+		},		
+		
+		render: function()
+		{
+			return(
+			<div>
+				<button type="button" onClick={this.handleClick.bind(this)}> Preview Formation</button>
+				<div id="divStyle">
+					<tbody>
+						{
+						(function (items, i, l)
+						{
+							items.push(<br style={{"clear" : "both"}} />)
+							while (i++ < l)
+							{
+								var refName = "ref" + i;
+								items.push(<PreviewShip id={i} ref={refName} colour={"blue"} />)
+								
+								if(i % 3 == 0)
+								{	
+									items.push(<br style={{"clear" : "both"}} />)
+								}
+							}
+						
+						return items;
+						})
+						
+						([], 0, 9)
+						
+						}
+					  </tbody>
+				</div>
+			</div>
+			)
+		}
+	});
+	
+	{ /* Preview ships, can be clicked on to toggle enabled/disabled state. */ }
+	var PreviewShip = React.createClass({
+		getInitialState: function()
+		{
+			return { 
+			enabled: true,
+			colour: "none"
+			};
+		},
+		
+		componentWillReceiveProps: function(nextProps)
+		{
+			this.setState({ colour: nextProps});
+			this.setState({ enabled: true });
+		},
+		
+		handleClick: function()
+		{
+			if(this.state.colour != "none")
+			{
+				this.setState({enabled: !this.state.enabled});
+			}
+		},
+		
+		render: function()
+		{
+			var sourceImg = "Images/" + this.state.colour + "ship.png";
+			var classN = this.state.enabled ? 'enabled' : 'disabled';
+			
+			if(this.state.colour == "none")
+			{
+				classN = 'hidden';
+				sourceImg = "Images/redship.png";
+			}
+			
+			var classes = classN + ' .floatleft';
+			return(<img src={sourceImg} className={classes} alt="Rad Red" onClick={this.handleClick} height="175" width="175"></img>)
+		}
+	});
+
+	{ /* Notes: A section for some design inferences I made from the instructions. */ }
+	var Notes = React.createClass({
+		render: function()
+		{
+			return (
+			<ul className={"sans"}>
+				<li>The three warnings for not assigning keys to React components are because my keys are assigned at the mid-level, but each mid-sized component is made up of multiple smaller components. That's where React wishes the keys were.</li>
+				<li>I assumed that enabled was the default state for ships upon formation creation, so when the preview button is clicked any disabled ships are re-enabled. </li>
+				<li>Normally, I would want to separate the JavaScript/ReactJS code from the HTML code, but did not for easier perusal.</li>
+				<li>Total Time on this assignment: ~8h, including time spent wrapping my dome around ReactJS.</li>
+			</ul>
+			)
+		}
+	});
+	
+	{ /* Main render. */ }
+	React.render(<ShipApp/>, document.getElementById('shipGrid'));
+    </script>
+	
+  </body>
+  
+  <footer>
+	<h1 class="sans">Cheers! Kayla Wright</h1>
+  </footer>
+</html>
+
+<!-- KW -->

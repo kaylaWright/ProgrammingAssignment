@@ -1,0 +1,92 @@
+/* General element positioning/style. */ 
+
+body
+{
+	margin-left: 15px;
+}
+
+.floatleft
+{
+	float:left;
+}
+
+h1
+{
+	background-color: #0099FF;
+	font-size: 24px;
+	font-weight: bolder;
+	border-radius: 15px;
+	vertical-align: center;
+	width: 500px;
+	padding-left: 25px;
+	
+}
+
+
+/* Select element backgrounds (for extra formation emphasis upon selection). */
+select option[value="blue"]
+{
+	background: #00BFFF; 
+}
+
+select option[value="brown"]
+{
+	background: #AD5C33; 
+}
+
+select option[value="green"]
+{
+	background: #5CAD5C; 
+}
+
+select option[value="red"]
+{
+	background: #D63333; 
+}
+
+select option[value="yellow"]
+{
+	background: #E0C266; 
+}
+
+
+
+/* Preview image. AKA: background, but that's a reserved word. */
+#divStyle
+{
+	background-color: rgb(100, 100, 175);
+	background-image: url('Images/notstolenskysprite.jpg');
+	width: 600px;
+	height: 600px;
+	border-radius: 35px;
+	margin-top: 15px;
+}
+
+
+/* Enabled/Disabled visual style for the preview image ships. */
+.enabled 
+{ 
+	margin: 5px;
+	opacity: 1; 
+}
+	
+.disabled
+ { 
+	margin: 5px;
+	opacity: 0.5;  
+}
+
+.hidden
+{ 
+	margin: 5px;
+	opacity: 0;
+}
+
+/* General Style, AKA: I dont' care for serifed fonts. */
+.sans
+{
+	font-family: Verdana, Arial, sans-serif;
+	width: 600px;
+}
+
+/* KW */
